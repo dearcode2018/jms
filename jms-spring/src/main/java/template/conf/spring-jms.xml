@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/jms	http://www.springframework.org/schema/jms/spring-jms-4.0.xsd
+	" default-lazy-init="true">
+
+
+	<!-- jms 目标连接工厂 -->
+	<bean id="targetConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="${broker.url}" />
+	</bean>
+
+	<!-- jms 连接池 -->
+	<bean id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+		<property name="connectionFactory" ref="targetConnectionFactory" />
+		<!-- 最大连接数 -->
+		<property name="maxConnections" value="10" />
+	</bean>	
+	
+	<!-- spirng 单一连接工厂，引入 具体的jms连接工厂 (以此来隔离jms具体实现) -->
+	<bean id="jmsConnectionFactory" class="org.springframework.jms.connection.SingleConnectionFactory">
+		<property name="targetConnectionFactory" ref="pooledConnectionFactory" />
+	</bean>
+
+	<!-- 队列 destination -->
+	<bean id="queueDestination" class="org.apache.activemq.command.ActiveMQQueue" autowire="constructor">
+		<constructor-arg name="name" value="queue" />
+	</bean>		
+	
+	<!-- 主题 destination -->
+	<bean id="topicDestination" class="org.apache.activemq.command.ActiveMQTopic" autowire="constructor">
+		<constructor-arg name="name" value="topic" />
+	</bean>	
+
+	<!-- jms 模板 -->
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<!-- 连接工厂 -->
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+	</bean>		
+
+	<!-- jms 消息监听器  -->
+	<bean id="consumeMessageListener" class="com.hua.jms.ConsumeMessageListener">
+	</bean>	
+	
+	<!-- jms 消息接收者 -->
+	<bean id="jmsConsumer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<!-- 连接工厂 -->
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+		<property name="destination" ref="queueDestination" /> 
+		<!-- 目的地: 主题 -->
+		<!-- <property name="destination" ref="topicDestination" /> -->
+		<!-- 消息监听器，监听发送到该目的的消息 -->
+		<property name="messageListener" ref="consumeMessageListener" />
+	</bean>		
+	
+	<!-- 消息生产服务 -->
+	<bean id="produceService" class="com.hua.service.impl.ProduceServiceImpl">
+		<property name="jmsTemplate" ref="jmsTemplate" />
+	</bean>		
+
+</beans>
