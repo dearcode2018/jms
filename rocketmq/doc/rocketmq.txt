@@ -1,0 +1,88 @@
+RocketMQ
+
+参考: https://www.jianshu.com/p/824066d70da8
+
+1.简介
+阿里开源的消息中间件，后来捐献给了Apache.
+开源的分布式消息传递和流式数据平台.
+
+2.概念
+1) Producer
+消息生产者，一般由业务系统负责生产消息
+支持分布式部署，通过多种负载均衡模式向Broker集群发送消息，发送过程支持
+快速失败并具有低延迟.
+生产者既可以自己去生产消息，也对外提供接口，外部应用通过调用接口，再由
+生产者将接收到的消息发送到MQ.
+2) Consumer
+消息消费者，一般是后台系统负责异步消费
+3) Push Consumer
+消费者的一种，应用通常向Consumer对象注册一个Listener接口，一旦收到
+消息，Consumer对象立刻回调Listener接口方法.
+4) Pull Consumer
+消费者的一种，应用通常调用Consumer对象的拉取消息方法从Broker拉取消息，
+主动权由应用控制，例如JmsTemplate的receive().
+5) Producer Group
+一类Producer的集合名称，这类Producer通常发送一类消息，且发送逻辑一致.
+6) Consumer Group
+一类Consumer的集合名称，这类Consumer通常消费一类消息，且消费逻辑一致.
+7) Broker (经纪人/中间人)
+消息中转角色，负责存储、转发消息，一般也称为Server，在JMS规范中为Provider.
+提供轻量级主题(Topic)和队列(Queue)机制来存储/转发消息. 支持Push/Pull模式，
+包含容错机制(2-3个拷贝)，提供丰富指标数据和报警机制.
+生产者定期向Broker发送心跳，而且只能向Broker集群中Master发送消息.
+消费者定期向Broker发送心跳，可以向Broker集群中Master和Slave接收消息.
+8) NameServer
+提供轻量级 服务发现 和 路由，每个Name Server记录完整的路由信息，并提供相应
+的读写服务，支持快速存储扩展.
+代理管理: Name Server接受来自Broker集群的注册，并提供检测代理的心跳机制.
+路由管理: 每个Name Server保存有关代理集群的全部路由信息以及客户端(生产者
+/消费者)查询的队列信息.
+9) Topic
+消息的逻辑分类，例如订单类、库存类的消息.
+10) Message
+Message是消息的载体，一个Message必须指定Topic，相当于寄存地址. Message
+还有一个可选的tag设置，便于消费者可基于tag进行消息过滤. 也可以添加额外的
+键值对.
+11) Tag
+Tag是对Topic的进一步细化，一般在相同业务模块中通过引入标签来标记不同通途
+的消息.
+12) 
+
+3.集群模式
+1) 单master
+只有一个mater节点，适合个人学习使用.
+2) 多master
+多个master组成集群节点，单个master节点宕机或重启对应用无影响.
+Topic对应的队列应分布在集群各个节点，而不是在一个节点上.
+缺点: 单个master宕机期间，未被消费的消息在节点恢复之前不可用，消息实时性
+受影响.
+3) 多master多slave异步复制
+在多master基础上，每个master节点至少有一个对应的slave. master可读写，slave
+只读，类似主备模式.
+优点: master宕机时，消费者可从slave读取消息，消息的实时性不受影响.
+缺点: 使用异步复制的同步方式可能会有消息丢失的问题.
+4) 多master多slave同步双写
+同上模式类似，区别在于数据同步方式.
+优点: 同步双写模式可确保数据不丢失
+缺点: 发送单个消息时间略长，性能比异步复制低10%左右
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

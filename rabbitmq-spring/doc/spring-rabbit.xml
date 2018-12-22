@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"	
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"		
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context	http://www.springframework.org/schema/context/spring-context.xsd	
+	http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+	" default-lazy-init="true">
+
+	
+	<!-- 连接工厂，指定帐号和虚拟机 -->
+	<rabbit:connection-factory id="connectionFactory" virtual-host="v_host1" username="r_test" password="r_test" host="127.0.0.1" port="5672"/>
+		
+	<!-- 通过指定下面的admin信息，当前producer中的exchange和queue会在rabbitmq服务器上自动生成 -->
+	<rabbit:admin id="connectAdmin" connection-factory="connectionFactory" />
+	
+	<!-- 定义queue -->
+	<rabbit:queue name="queueTest_1" durable="true" auto-declare="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+
+	<!-- 定义direct exchange，绑定queueTest_1 -->
+	<rabbit:direct-exchange name="exchangeTest_01" durable="true" auto-delete="false" declared-by="connectAdmin">
+		<rabbit:bindings>
+			<rabbit:binding queue="queueTest_1" key="queueTest_1Key"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+
+	<!-- 定义rabbit template 用于数据的接收和发送 -->
+	<rabbit:template id="amqpTemplate" connection-factory="connectionFactory" exchange="exchangeTest_01" />
+	
+	<!-- 定义消息接收者 -->
+	<bean id="beiJingReceiver" class="com.hua.consumer.BeiJingConsumer" />
+
+	<!-- queue listener 观察 监听模式 当有消息达到时会通知监听在对应的队列上的监听对象 -->
+	<rabbit:listener-container connection-factory="connectionFactory">
+		<!-- 消息接受者 - 队列 -->
+		<rabbit:listener ref="beiJingReceiver" queues="queueTest_1"/>
+	</rabbit:listener-container>
+	
+	<!-- 定义队列  -->
+	<rabbit:queue name="queueTest_1_2" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	<!-- 定义direct exchange，绑定queueTest_1_2 -->
+	<rabbit:direct-exchange name="exchangeTest_01_2" durable="true" auto-delete="false" declared-by="connectAdmin">
+		<rabbit:bindings>
+			<rabbit:binding queue="queueTest_1_2" key="queueTest_1_2Key"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>	
+	
+	<!-- 定义消息接收者 -->
+	<bean id="guangZhouReceiver" class="com.hua.consumer.GuangZhouConsumer" />
+
+	<!-- queue listener 观察 监听模式 当有消息达到时会通知监听在对应的队列上的监听对象 -->
+	<rabbit:listener-container connection-factory="connectionFactory">
+		<!-- 消息接受者 - 队列 -->
+		<rabbit:listener ref="guangZhouReceiver" queues="queueTest_1_2"/>
+	</rabbit:listener-container>	
+	
+	<!-- ====================================================================================== -->
+	
+	<!-- 连接工厂，指定帐号和虚拟机 -->
+	<rabbit:connection-factory id="connectionFactory2" virtual-host="v_host2" username="r_test" password="r_test" host="127.0.0.1" port="5672"/>
+
+	<!-- 通过指定下面的admin信息，当前producer中的exchange和queue会在rabbitmq服务器上自动生成 -->
+	<rabbit:admin id="connectAdmin2" connection-factory="connectionFactory2" />	
+
+<!-- 定义queue -->
+	<rabbit:queue name="queueTest_2" durable="true" auto-declare="true" auto-delete="false" exclusive="false" declared-by="connectAdmin2" />
+
+	<!-- 定义direct exchange，绑定queueTest_2 -->
+	<rabbit:direct-exchange name="exchangeTest_02" durable="true" auto-delete="false" declared-by="connectAdmin">
+		<rabbit:bindings>
+			<rabbit:binding queue="queueTest_2" key="queueTest_2Key"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+
+	<!-- 定义rabbit template 用于数据的接收和发送 -->
+	<rabbit:template id="amqpTemplate2" connection-factory="connectionFactory2" exchange="exchangeTest_02" />
+	
+	<!-- 定义消息接收者 -->
+	<bean id="shangHaiReceiver" class="com.hua.consumer.ShangHaiConsumer" />
+
+	<!-- queue listener 观察 监听模式 当有消息达到时会通知监听在对应的队列上的监听对象 -->
+	<rabbit:listener-container connection-factory="connectionFactory2">
+		<!-- 消息接受者 - 队列 -->
+		<rabbit:listener ref="shangHaiReceiver" queues="queueTest_2"/>
+	</rabbit:listener-container>
+
+	
+</beans>

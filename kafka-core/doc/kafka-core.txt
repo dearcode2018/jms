@@ -1,0 +1,74 @@
+
+
+一、基本知识
+kafka版本自带zookeeper
+
+二、windows环境下使用
+cd %KAFKA_HOME%
+1. 启动zookeeper
+bin\windows\zookeeper-server-start.bat config\zookeeper.properties
+2181 端口
+
+2.启动kafka
+bin\windows\kafka-server-start.bat config\server.properties
+9092端口
+
+删除了topic之后，导致kafka无法启动，则删除 /tmp下的日志即可
+
+3.创建主题
+bin\windows\kafka-topics.bat --create --zookeeper 127.0.0.1:2181 --replication-factor 1
+-- partitions 1 --topic [topic_name]
+
+查看已经创建的主题
+bin\windows\kafka-topics.bat --list --zookeeper 127.0.0.1:2181
+
+4.创建消费者
+bin\windows\kafka-console-consumer.bat --bootstrap-server 127.0.0.1:2181 
+--topic [topic_name] --from-beginning
+创建之后，后续可以在该终端查看收到的消息
+
+5.创建生产者
+bin\windows\kafka-console-producer.bat --broker-list 127.0.0.1:2181 --topic [topic_name]
+执行之后，进入消息输入状态，输入消息，回车即可发送到kafka服务器，最后在消费者
+端可以收到.
+
+三.应用程序
+1.启动zookeeper/kafka
+
+2.
+
+四、应用场景
+1.主题
+无需提前创建，事先约定好主题即可实现发布和接收.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

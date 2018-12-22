@@ -11,8 +11,18 @@
 	<modules>
 		<!-- 模板 -->
 		<module>jms-template</module>		
-		<module>jms</module>		
+		<module>jms-core</module>		
 		<module>jms-spring</module>		
+		<module>activemq</module>
+		<module>activemq-broker</module>
+		<module>activemq-spring</module>
+		<module>activemq5</module>
+		<module>kafka-core</module>
+		<module>kafka-spring</module>
+		<module>rabbitmq</module>
+		<module>rabbitmq-spring</module>
+		<module>rocketmq</module>
+		<module>rocketmq-spring</module>
 	</modules>
  
 	<!-- 公共属性 -->
@@ -27,6 +37,9 @@
 		<maven.plugin.resources.version>2.7</maven.plugin.resources.version>
 		<maven.plugin.dependency.version>2.10</maven.plugin.dependency.version>
 		<maven.plugin.war.version>3.0</maven.plugin.war.version>
+		<activemq.version>5.15.8</activemq.version>		
+		<spring.version>5.0.8.RELEASE</spring.version>
+		<javax.jms.version>2.0.1</javax.jms.version>			
 	</properties>  
   
   

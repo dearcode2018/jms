@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.hua</groupId>
+		<artifactId>jms-entire</artifactId>
+		<version>0.0.1</version>
+	</parent>	
+	<artifactId>rocketmq</artifactId>
+	<packaging>jar</packaging>
+	<name>rocketmq</name>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<jms.core.version>0.0.1</jms.core.version>
+		<rocketmq.version>4.2.0</rocketmq.version>
+	</properties>
+
+	<dependencies>
+		
+		<dependency>
+			<groupId>com.hua</groupId>
+			<artifactId>jms-core</artifactId>
+			<version>${jms.core.version}</version>
+		</dependency>		
+
+		<dependency>
+		    <groupId>org.apache.rocketmq</groupId>
+		    <artifactId>rocketmq-client</artifactId>
+		    <version>${rocketmq.version}</version>
+		</dependency>
+		
+	</dependencies>
+
+</project>

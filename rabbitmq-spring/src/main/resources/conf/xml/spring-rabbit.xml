@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"	
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"		
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context	http://www.springframework.org/schema/context/spring-context.xsd	
+	http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+	" default-lazy-init="true">
+
+
+	<!-- 
+	（declared-by属性暂时只是一个标志作用）
+	 连接工厂: 帐户、密码、虚拟机
+	 管理对象: 作为声明者而存在
+	 队列: 接受者关注的对象，由指定管理对象声明
+	 交换机: 绑定多个队列，消息生产者根据绑定的key来发送消息，由指定管理对象声明，可用一个名称声明多个交换机对象，做多个绑定
+	 模板: 指定连接工厂、交换机
+	 接收者: 实现MessageListener接口
+	 监听容器: 设置接收者监听哪些队列
+	 -->
+	
+	<!-- 连接工厂，指定帐号和虚拟机 -->
+	<rabbit:connection-factory id="connectionFactory" virtual-host="v_host1" username="r_test" password="r_test" host="127.0.0.1" port="5672"/>
+		
+	<!-- 通过指定下面的admin信息，当前producer中的exchange和queue会在rabbitmq服务器上自动生成 -->
+	<rabbit:admin id="connectAdmin" connection-factory="connectionFactory" />
+	
+	<!-- 定义queue1.1 -->
+	<rabbit:queue name="queueTest_1_1" durable="true" auto-declare="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+
+	<!-- 定义direct exchange，绑定queueTest_1 -->
+	<rabbit:direct-exchange name="exchangeTest_01" durable="true" auto-delete="false" declared-by="connectAdmin">
+		<rabbit:bindings>
+			<rabbit:binding queue="queueTest_1_1" key="queueTest_1Key"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+
+	<!-- 定义rabbit template 用于数据的接收和发送，指定交换机，一个模板对应一个交换机 -->
+	<rabbit:template id="amqpTemplate" connection-factory="connectionFactory" exchange="exchangeTest_01" />
+	
+	<!-- 定义消息接收者1.1 -->
+	<bean id="beiJingReceiver" class="com.hua.consumer.BeiJingConsumer" />
+
+	<!-- queue listener 观察 监听模式 当有消息达到时会通知监听在对应的队列上的监听对象 -->
+	<rabbit:listener-container connection-factory="connectionFactory">
+		<!-- 消息接受者 - 多个队列 -->
+		<rabbit:listener ref="beiJingReceiver" queues="queueTest_1_1"/>
+	</rabbit:listener-container>
+	
+	<!-- 定义队列1.2  -->
+	<rabbit:queue name="queueTest_1_2" durable="true" auto-delete="false" exclusive="false" declared-by="connectAdmin" />
+	
+	<!-- 定义direct exchange，绑定queueTest_1_2, 此交换机和之前声明的交换机同名 -->
+	<rabbit:direct-exchange name="exchangeTest_01" durable="true" auto-delete="false" declared-by="connectAdmin">
+		<rabbit:bindings>
+			<rabbit:binding queue="queueTest_1_2" key="queueTest_1_2Key"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>	
+	
+	<!-- 定义消息接收者1.2 -->
+	<bean id="guangZhouReceiver" class="com.hua.consumer.GuangZhouConsumer" />
+
+	<!-- queue listener 观察 监听模式 当有消息达到时会通知监听在对应的队列上的监听对象 -->
+	<rabbit:listener-container connection-factory="connectionFactory">
+		<!-- 消息接受者 - 队列 -->
+		<rabbit:listener ref="guangZhouReceiver" queues="queueTest_1_2"/>
+	</rabbit:listener-container>	
+	
+	
+</beans>

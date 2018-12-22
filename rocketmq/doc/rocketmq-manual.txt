@@ -1,0 +1,63 @@
+RocketMQ 手册
+
+
+
+Windows环境搭建 (单master模式)
+1.配置 ROCKETMQ_HOME
+
+2.启动Name Server
+cd %ROCKETMQ_HOME%\bin
+mqnamesrv.bat
+# 启动信息
+The Name Server boot success. serializeType=JSON
+3.启动Broker
+cd %ROCKETMQ_HOME%\bin
+# 启动broker时指定 nameserver地址
+mqbroker -n 127.0.0.1:9876
+注意，在学习使用中，需要把JVM内存配置小一些，不然内存不够，无法启动.
+修改bin\runserver.cmd
+将set "JAVA_OPT=%JAVA_OPT% -server -Xms2g -Xmx2g -Xmn1g 
+-XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m"
+修改为
+set "JAVA_OPT=%JAVA_OPT% -server -Xms128m -Xmx256m -Xmn256m 
+-XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m"
+另外，runserver.cmd中不要输入中文注释，文件编码错误导致无法正常启动.
+
+4.发送和接收消息
+# 通过临时环境变量设置NameServer地址
+cd %ROCKETMQ_HOME%\bin
+# 启动消费者
+set NAMESRV_ADDR=127.0.0.1:9876
+tools org.apache.rocketmq.example.quickstart.Consumer
+
+# 启动生产者
+set NAMESRV_ADDR=127.0.0.1:9876
+tools org.apache.rocketmq.example.quickstart.Producer
+5.关闭服务
+cd %ROCKETMQ_HOME%\bin
+# 关闭Broker
+mqshutdown broker
+# 关闭NameServer
+mqshutdown namesrv
+
+观察消费者是否收到消息，收到则表示成功，这只是一个验证实例，不能进一步操作.
+ConsumeMessageThread_7 Receive New Messages: [MessageExt [queueId=1, storeSize=1
+80, queueOffset=499, sysFlag=0, bornTimestamp=1532840757541, bornHost=/192.168.1
+.101:52946, storeTimestamp=1532840757544, storeHost=/192.168.1.101:10911, msgId=
+
+
+命令行操作
+命令行参考: http://jameswxx.iteye.com/blog/2091971
+1.创建主题
+mqadmin updateTopic -c DefaultCluster -n 127.0.0.1:9876 -t fruit_topic
+
+
+
+
+
+
+
+
+
+
+

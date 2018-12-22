@@ -1,0 +1,35 @@
+Apache ActiveMQ 5
+
+Windows环境使用
+1.启动
+运行bin\win64\activemq.bat脚本
+
+2.访问管理页面
+activemq默认启动时，启动了内置的jetty服务器，提供一个用户监控ActiveMQ的
+admin应用，进入Mange ActiveMQ broker需要输入管理帐号.
+默认帐号密码: admin/admin
+http://127.0.0.1:8161
+
+Linux环境使用
+1.启动/停止 守护(后台)进程
+activemq.sh start
+activemq.sh stop
+2. 控制台(前台)进程
+activemq.sh console
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

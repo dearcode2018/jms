@@ -1,0 +1,117 @@
+【项目信息】
+项目名称 : rabbit-mq
+中文名称 : 消息队列
+项目版本 : version 1.0
+
+
+主要技术 : 
+
+项目描述 : 
+rabbitmq是由erlang开发的AMQP(advanced message queue)的开源实现.
+
+项目备注 : 
+
+【项目规划】
+
+1) 异步处理
+串行处理: 一个请求响应依次处理所有业务.
+并行处理: 一个请求响应，处理完核心业务后，其他业务做并行处理.
+并行处理虽然已提高处理速度，但除了核心业务，并行业务处理还是占用了响应时间.
+
+消息队列: 把非核心业务放在队列中处理，可以提高响应速度，即异步处理.
+引入消息队列之后，响应时间=核心业务处理时间 + 写入消息队列的时间(可忽略不计)，响应时间为串行的3x倍，并行的2x倍.
+
+ 参考
+https://blog.csdn.net/whoamiyang/article/details/54954780
+
+2) 消息队列
+写入消息、订阅消息
+Broker: 提供传输服务，维护一条从生产者到消费者的路线，保证数据能按照指定的方式进行传输.
+Exchange: 消息交换机，指定消息按什么规则进行路由.
+Queue: 消息的载体，每个消息都会被放入一个或多个队列.
+Binding: 将Exchange和Queue按照路由规则绑定起来.
+Routing Key: 路由关键字，交换机根据关键字进行消息投递.
+VHost: 虚拟主机，一个broker可以有多个VHost，用作不同用户的权限分离.
+Producer: 消息生产者，即投递消息的程序.
+Consumer: 消息消费者，即接收消息的程序.
+Channel: 消息通道，在客户端的每个连接里，可以建立多个通道.
+3) 消息持久化
+交换机持久化:
+hannel.ExchangeDeclare(ExchangeName, "direct", durable: true, autoDelete: false, arguments: null);//声明消息队列，且为可持久化的
+队列持久化:
+channel.QueueDeclare(QueueName, durable: true, exclusive: false, autoDelete: false, arguments: null);//声明消息队列，且为可持久化的
+消息持久化: 投递时指定delivery_mode=2 (1是非持久化)
+channel.basicPublish("", queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, msg.getBytes());
+
+如果交换机和队列都是持久化的，那么他们之间的绑定也是持久化的，反之，若2者之间有一个非持久化，则不允许建立绑定.
+交换机和队列创建了之后，就不能修改其属性，只能删除后重新创建.
+4) 消息分发
+交换机: 
+Direct Exchange: 直接匹配,通过交换机名称和路由关键字来发送与接收消息.
+Fanout Exchange: 广播订阅，向所有的消费者发布消息，只有消费者将队列绑定到该路由器才能接收到消息，忽略路由关键字.
+Topic Exchange: 主题匹配订阅，路由关键字采用通配符 .*或#，路由关键字采用.来分隔多个词，只有消费者将队列绑定到该路由器且符合
+路由关键字的规则才能收到消息.
+Headers Exchange: 消息头订阅，消息发布前，为消息定义一个或多个键值对的消息头，消费者同时要定义类似的键值对请求头，只有请求头和
+消息头匹配才能接收消息，忽略路由关键字.
+默认交换机: 如果创建交换机没有指定名称，则系统默认使用amq.direct这个交换机.  
+
+5) 安装 (windows)
+A.安装erlang环境，设置ERLANG_HOME 和 添加PATH
+B.安装rabbitmq-server
+C.在rabbitmq-server HOME\bin 目录下运行命令安装插件: rabbitmq-plugins enable rabbitmq_management
+6) 启动 (windows)
+安装完插件后，需要重新启动rabbitmq服务器，若在服务中查看RabbitMQ状态，若启动则停止启动，然后通过命令去启动
+
+rabbitmq_home\sbin
+::rabbitmqctl start_app
+/* 普通方式启动 */
+rabbitmq-server start
+/* 以后台方式启动 */
+rabbitmq-server -detached 
+:: RabbitMQ 关闭命令
+rabbitmqctl stop_app
+7) 管理后台
+http://127.0.0.1:15672
+帐号/密码: guest/guest
+列出所有用户: rabbitmqctl list_users
+创建用户: rabbitmqctl add_user 用户名 密码
+用户角色: 超级管理员、监控者、策略指定者、普通管理者、其他(通常是普通的生产者和消费者).
+设置用户角色: rabbitmqctl set_user_tags 用户名 角色名(多个角色用空格隔开)
+修改密码: rabbitmqctl change_password 用户名 密码
+删除用户: rabbitmqctl delete_user 用户名
+
+
+8)
+9) 生产者端
+创建ConnectionFactory，设置hostname/portNumber
+通过ConnectionFactory创建Connection连接
+通过Connection创建Channel通道
+创建队列，并且和通道绑定
+创建消息，发送到队列
+若没有创建交换机的话，默认使用的是rabbitmq的exchange交换机.
+10) 消费者端
+创建ConnectionFactory，设置hostname/portNumber
+通过ConnectionFactory创建Connection连接
+通过Connection创建Channel通道
+创建队列，并且和通道绑定，队列的名称要和生产者创建的名称相同
+创建消费者Consumer来接收消息，同时将消费者，
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
