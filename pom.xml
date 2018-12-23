@@ -16,6 +16,7 @@
 		<module>activemq</module>
 		<module>activemq-broker</module>
 		<module>activemq-spring</module>
+		<module>activemq-junit</module>
 		<module>activemq5</module>
 		<module>kafka-core</module>
 		<module>kafka-spring</module>

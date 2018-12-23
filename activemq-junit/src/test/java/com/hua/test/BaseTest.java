@@ -28,7 +28,8 @@ import com.hua.log.BaseLog;
 public class BaseTest extends BaseLog {
 	
 	/** 代理地址  */
-	protected static final String BROKER_URL = "vm://myBroker?broker.persistent=faslse";
+	protected static final String BROKER_URL = "vm://myBroker?broker.persistent=faslse"
+			+ "&create=false";
 	
 	/** 连接MQ服务器用户名 */
 	protected static final String USERNAME = "activemq";

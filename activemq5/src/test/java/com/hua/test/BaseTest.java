@@ -27,7 +27,20 @@ import com.hua.log.BaseLog;
 @DisplayName("BaseTest")
 public class BaseTest extends BaseLog {
 	
-	protected String QUEUE_NAME = "fruit";
+	/** 代理地址  */
+	protected static final String BROKER_URL = "tcp://192.168.5.2:61616";
+	
+	/** 连接MQ服务器用户名 */
+	protected static final String USERNAME = "activemq";
+	
+	/** 连接MQ服务器密码 */
+	protected static final String PASSWORD = "activemq";
+	
+	/** 队列名称 */
+	protected static final String QUEUE_NAME = "myQueue";
+	
+	/** 主题名称 */
+	protected static final String TOPIC_NAME = "myTopic";
 	
 	/**
 	 * 
