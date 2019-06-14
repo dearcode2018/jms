@@ -61,7 +61,7 @@ import com.hua.util.DateTimeUtil;
 public final class ShareFileMasterSlaveTest extends BaseTest {
 	
 	/* 逗号后面不能有空格 */
-	private String 	BROKER_URL = "failover:(tcp://192.168.5.2:61616,tcp://192.168.5.2:61617,tcp://192.168.5.2:61618)";
+	private String 	BROKER_URL = "failover:(tcp://192.168.5.11:61616,tcp://192.168.5.12:61616,tcp://192.168.5.13:61616)";
 	
 	/**
 	 * 
@@ -127,6 +127,7 @@ public final class ShareFileMasterSlaveTest extends BaseTest {
 		}
 	}
 	
+	
 	/**
 	 * 
 	 * 描述: 
@@ -136,6 +137,51 @@ public final class ShareFileMasterSlaveTest extends BaseTest {
 	//@DisplayName("test")
 	@Test
 	public void producer() {
+		try {
+			ConnectionFactory factory = new ActiveMQConnectionFactory(BROKER_URL);
+			// 使用用户和密码连接
+			Connection connection = factory.createConnection(USERNAME, PASSWORD);
+			//Connection connection = factory.createConnection();
+			// 开始连接
+			connection.start();
+			// 是否使用本地事务
+			boolean transacted = true;
+			/*
+			 * 是否使用本地事务，确认模式
+			 */
+			Session session = connection.createSession(transacted, Session.SESSION_TRANSACTED);
+			
+			/* =============生产费者 ============= */			
+			// 创建队列
+			Queue queue = session.createQueue(QUEUE_NAME);
+			// 基于队列创建生产者
+			MessageProducer producer = session.createProducer(queue);
+			String msg = "i am producer(来自生产者的消息)Queue" + DateTimeUtil.format(new Date());
+			// 文本消息
+			TextMessage message = session.createTextMessage(msg);
+			// 发送消息
+			producer.send(message);
+			
+			/*
+			 * 提交事务
+			 * 不提交事务，数据不会发送到服务器
+			 */
+			session.commit();	
+			
+		} catch (Exception e) {
+			log.error("producer =====> ", e);
+		}
+	}
+	
+	/**
+	 * 
+	 * 描述: 
+	 * @author qye.zheng
+	 * 
+	 */
+	//@DisplayName("test")
+	@Test
+	public void consumer() {
 		try {
 			ConnectionFactory factory = new ActiveMQConnectionFactory(BROKER_URL);
 			// 使用用户和密码连接
@@ -171,51 +217,6 @@ public final class ShareFileMasterSlaveTest extends BaseTest {
 			 * acknowledge()方法可以不调用
 			 */
 			session.commit();		
-			
-		} catch (Exception e) {
-			log.error("producer =====> ", e);
-		}
-	}
-	
-	/**
-	 * 
-	 * 描述: 
-	 * @author qye.zheng
-	 * 
-	 */
-	//@DisplayName("test")
-	@Test
-	public void consumer() {
-		try {
-			ConnectionFactory factory = new ActiveMQConnectionFactory(BROKER_URL);
-			// 使用用户和密码连接
-			Connection connection = factory.createConnection(USERNAME, PASSWORD);
-			//Connection connection = factory.createConnection();
-			// 开始连接
-			connection.start();
-			// 是否使用本地事务
-			boolean transacted = true;
-			/*
-			 * 是否使用本地事务，确认模式
-			 */
-			Session session = connection.createSession(transacted, Session.SESSION_TRANSACTED);
-			
-			/* =============生产费者 ============= */			
-			// 创建队列
-			Queue queue = session.createQueue(QUEUE_NAME);
-			// 基于队列创建生产者
-			MessageProducer producer = session.createProducer(queue);
-			String msg = "i am producer(来自生产者的消息)Queue" + DateTimeUtil.format(new Date());
-			// 文本消息
-			TextMessage message = session.createTextMessage(msg);
-			// 发送消息
-			producer.send(message);
-			
-			/*
-			 * 提交事务
-			 * 不提交事务，数据不会发送到服务器
-			 */
-			session.commit();	
 			
 		} catch (Exception e) {
 			log.error("consumer =====> ", e);

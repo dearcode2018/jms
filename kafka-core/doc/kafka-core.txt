@@ -17,7 +17,7 @@ bin\windows\kafka-server-start.bat config\server.properties
 
 3.创建主题
 bin\windows\kafka-topics.bat --create --zookeeper 127.0.0.1:2181 --replication-factor 1
--- partitions 1 --topic [topic_name]
+--partitions 1 --topic [topic_name]
 
 查看已经创建的主题
 bin\windows\kafka-topics.bat --list --zookeeper 127.0.0.1:2181

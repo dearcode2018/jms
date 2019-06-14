@@ -1,0 +1,25 @@
+Apache Kafka
+
+1.主题可已配置为不存在时自动创建，一般在研发环境使用.
+
+
+# 演示-命令行方式
+# 生产者: 发送消息
+./bin/kafka-console-producer.sh --broker-list 192.168.5.11:9090,192.168.5.11:9091,192.168.5.11:9092 --topic haha1
+# 消费者: 接收消息
+./bin/kafka-console-consumer.sh --bootstrap-server 192.168.5.11:9090,192.168.5.11:9091,192.168.5.11:9092 --topic haha1 --from-beginning
+
+# 发送和接收消息正常，说明集群正常工作
+
+
+
+
+
+
+
+
+
+
+
+
+
