@@ -14,7 +14,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
 		<jms.core.version>0.0.1</jms.core.version>
-		<kafka.version>1.1.0</kafka.version>
+		<kafka.version>2.2.0</kafka.version>
 	</properties>
 
 	<dependencies>

@@ -14,6 +14,8 @@
 	
 	<properties>
 		<kafka.core.version>0.0.1</kafka.core.version>
+		<!-- 覆盖Boot版本 -->
+		<kafka.version>2.2.0</kafka.version>
 	</properties>
 
 	<!-- 使用spring boot 构建插件 运行: mvn spring-boot:run -->

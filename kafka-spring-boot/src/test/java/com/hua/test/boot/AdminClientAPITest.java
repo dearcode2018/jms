@@ -1,6 +1,6 @@
 /**
  * 描述: 
- * KafkaSpringBootTest.java
+ * AdminClientAPITest.java
  * 
  * @author qye.zheng
  *  version 1.0
@@ -20,9 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-import javax.annotation.Resource;
-import javax.transaction.Transactional;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -30,13 +27,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
-//import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.concurrent.ListenableFuture;
 
 import com.hua.ApplicationStarter;
-import com.hua.entity.User;
 import com.hua.test.BaseTest;
 
 
@@ -44,7 +36,7 @@ import com.hua.test.BaseTest;
  * 描述: 
  * 
  * @author qye.zheng
- * KafkaSpringBootTest
+ * AdminClientAPITest
  */
 //@DisplayName("测试类名称")
 //@Tag("测试类标签")
@@ -55,7 +47,7 @@ import com.hua.test.BaseTest;
 @SpringBootTest(classes = {ApplicationStarter.class}, 
 webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 //@MapperScan(basePackages = {"com.hua.mapper"})
-public class KafkaSpringBootTest extends BaseTest {
+public final class AdminClientAPITest extends BaseTest {
 
 	
 	/*
@@ -85,20 +77,6 @@ public class KafkaSpringBootTest extends BaseTest {
 	//@Resource
 	//private UserController userController;
 	
-	/*
-	 * key: String，序列化: org.apache.kafka.common.serialization.StringSerializer， 反序列化: org.apache.kafka.common.serialization.StringDeserializer
-	 * value:  Object, 序列化: org.springframework.kafka.support.serializer.JsonSerializer，反序列化: org.springframework.kafka.support.serializer.JsonDeserializer
-	 * 
-	 * 注意: 反序列化除了要指定反序列化器，还要配置信任包路径.spring.kafka.consumer.properties[spring.json.trusted.packages]
-	 * 
-	 * 
-	 */
-	@Resource
-	private KafkaTemplate<String, Object> kafkaTemplate;	
-	
-	//@Resource
-	//private KafkaTemplate<String, Object> kafkaTemplate2;	
-	
 	/**
 	 * 引当前项目用其他项目之后，然后可以使用
 	 * SpringJunitTest模板测试的其他项目
@@ -109,92 +87,7 @@ public class KafkaSpringBootTest extends BaseTest {
 	 * 
 	 */
 	
-	/**
-	 * 
-	 * 描述: 
-	 * @author qye.zheng
-	 * 
-	 */
-	//@DisplayName("test")
-	//@Transactional
-	@Test
-	public void testSend() {
-		try {
-			//kafkaTemplate.send("haha1", "海岸有你");
-			// 使用默认的主题
-			//kafkaTemplate.sendDefault("使用默认的主题");
-			
-			ListenableFuture<SendResult<String, Object>> future = kafkaTemplate.sendDefault("一个分组只有一个消费者能收到");
-			System.out.println(future.get().getProducerRecord().toString());
-		} catch (Exception e) {
-			log.error("testSend =====> ", e);
-		}
-	}
 	
-	/**
-	 * 
-	 * 描述: 
-	 * @author qye.zheng
-	 * 
-	 */
-	//@DisplayName("test")
-	@Test
-	public void testSend2() {
-		try {
-			kafkaTemplate.send("friday", "海岸有你3");
-			
-			// 使用默认的主题
-			//kafkaTemplate.sendDefault("使用默认的主题");
-			
-		} catch (Exception e) {
-			log.error("testSend2 =====> ", e);
-		}
-	}		
-	
-	/**
-	 * 
-	 * 描述: 
-	 * @author qye.zheng
-	 * 
-	 */
-	//@DisplayName("test")
-	@Test
-	public void testSendWithKey() {
-		try {
-			String key = "myKey2";
-			User user = new User();
-			user.setUsername("张三");
-			kafkaTemplate.send("haha3", key, user);
-			// 使用默认的主题
-			//kafkaTemplate.sendDefault("使用默认的主题");
-			
-			
-		} catch (Exception e) {
-			log.error("testSendWithKey =====> ", e);
-		}
-	}		
-	
-	/**
-	 * 
-	 * 描述: 
-	 * @author qye.zheng
-	 * 
-	 */
-	//@DisplayName("test")
-	@Test
-	public void testSendWithPartition() {
-		try {
-			kafkaTemplate.send("friday", 0, "ak", "afasfAA");
-			//kafkaTemplate.send("friday", "海岸有你3");
-			
-			// 使用默认的主题
-			//kafkaTemplate.sendDefault("使用默认的主题");
-			
-			
-		} catch (Exception e) {
-			log.error("testSendWithPartition =====> ", e);
-		}
-	}		
 	
 	/**
 	 * 

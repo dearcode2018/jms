@@ -8,8 +8,6 @@ package com.hua;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.kafka.annotation.EnableKafka;
 
  /**
  * @type ApplicationStarter
@@ -30,7 +28,6 @@ import org.springframework.kafka.annotation.EnableKafka;
 //@EnableCircuitBreaker
 //@EnableHystrixDashboard //
 //@EntityScan
-@EnableKafka
 public class ApplicationStarter
 {
 	

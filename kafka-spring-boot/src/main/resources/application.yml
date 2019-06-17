@@ -29,18 +29,65 @@ spring:
       additional-paths:
       - src/main/java
 
+  # 消息发布/订阅配置
   kafka:
+    # 生产/消费者共用Kafka集群
     bootstrap-servers: 192.168.5.11:9090
-    consumer:
-      auto-offset-reset: earliest
-      group-id: 
     template:
       default-topic: haha1
-
-
-
-
-
+    # 生产者
+    producer: 
+      #bootstrap-servers: 
+      # 
+      client-id: producer001
+      # -1(或all),0,1,min.insync.replicas指定最小副本数量
+      #acks: all
+      acks: 1
+      # 尝试次数
+      retries: 1
+      # none，gzip，snappy，lz4，或zstd
+      compression-type: gzip
+      # 批量大小
+      batch-size: 64KB
+#      batch-size: 
+#        negative: true
+#      # 批处理累积数据大小
+#      buffer-memory: 
+#       negative: true
+      # 非空开启事务支持
+      #transaction-id-prefix: tx_
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      #value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  
+    # 消费者 
+    consumer:
+      #bootstrap-servers: 
+      # 心跳间隔，消费者组和Kafka协调器的心跳，多久重新分配分区(assign 和 revoke)
+      heartbeat-interval: 1s
+      # 自动重置偏移: earliest-从最早开始. lastest: 最后一个/最新的开始
+      auto-offset-reset: latest
+      # 消费者组，Kafka根据消费者组id存储偏移
+      group-id: consumerGroup001
+      # 客户端标识，用于日志，在(消费者)集群中唯一
+      client-id: consumer_001
+      # 是否在后台自动提交消费者偏移量
+      enable-auto-commit: true
+      #value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties: 
+        #spring.json.add.type.headers: false
+        # *: 匹配所有包，多个包名用逗号隔开，不支持包名加*的方式
+        spring.json.trusted.packages: com.hua.entity
+        # 信任所有包
+        #spring.json.trusted.packages: '*'
+        # 信任的包
+        # spring.json.trusted.packages: com.hua.entity,com.hua.bean
+        #spring.json.value.default.type: com.example.Invoice
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      # 使用Json反序列化，需要配置信任包: spring.kafka.consumer.properties[spring.json.trusted.packages]
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      # 反序列化为字符串
+      #value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 
 
