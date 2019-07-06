@@ -66,20 +66,22 @@ spring:
       #max-poll-records: 
       #bootstrap-servers: 
       # 心跳间隔，消费者组和Kafka协调器的心跳，多久重新分配分区(assign 和 revoke)
-      heartbeat-interval: 1s
+      # 不能大于 session.timeout.ms=3000 (默认3000毫秒)
+      heartbeat-interval: 3000
       # 自动重置偏移: earliest-从最早开始. lastest: 最后一个/最新的开始
       auto-offset-reset: latest
       # 消费者组，Kafka根据消费者组id存储偏移
       group-id: consumerGroup001
       # 客户端标识，用于日志，在(消费者)集群中唯一
       client-id: consumer_001
-      # 是否在后台自动提交消费者偏移量，一定要关闭自动提交
+      # 是否在后台自动提交消费者偏移量
       enable-auto-commit: false
       #value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties: 
         #spring.json.add.type.headers: false
         # *: 匹配所有包，多个包名用逗号隔开，不支持包名加*的方式
         spring.json.trusted.packages: com.hua.entity
+         
         # 信任所有包
         #spring.json.trusted.packages: '*'
         # 信任的包
@@ -90,8 +92,31 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       # 反序列化为字符串
       #value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      
 
-
+ # 数据源
+datasource: 
+  first: 
+    jdbc-url: 'jdbc:mysql://127.0.0.1:3306/db_01?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai'
+    username: root
+    password: 'root'
+    driver-class-name: com.mysql.jdbc.Driver
+    auto-commit: false
+    idle-timeout: 180000
+    maximum-pool-size: 2000
+    minimum-idle: 100
+    connection-timeout: 10000
+    connection-test-query: SELECT 1
+    
+  second: 
+    jdbc-url: 'jdbc:mysql://127.0.0.1:3306/db_02?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai'
+    username: root
+    password: 'root'
+    driver-class-name: com.mysql.jdbc.Driver
+    auto-commit: false
+    idle-timeout: 180000
+    maximum-pool-size: 2000
+    minimum-idle: 100
+    connection-timeout: 10000
+    connection-test-query: SELECT 1
 
 

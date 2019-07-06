@@ -19,6 +19,7 @@
 		<module>activemq-junit</module>
 		<module>activemq5</module>
 		<module>kafka-core</module>
+		<module>kafka-simulate</module>
 		<module>kafka-spring</module>
 		<module>kafka-spring-boot</module>
 		<module>rabbitmq</module>

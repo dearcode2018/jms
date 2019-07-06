@@ -1,0 +1,36 @@
+
+
+1.重复消费问题
+1) 出现的场景: 消费者消费能力低，处理消息速度慢; 在处理完之后提交下一个消费的
+offset之前，session已经超时，kafka视这种情况为消费失败，导致一直重复消费.
+2) 关键参数: 消费时间、消息总数、分区总数、会话超时时间、
+消费者数量(一个分组同一主题)、重新分区(心跳)时间间隔、
+
+5) 解决方案
+> 关闭自动提交(spring.kafka.consumer.enable-auto-commit=false)
+> 延长session-time-out(目前spring-boot没有该配置)，减少max-poll-records(默认500)
+spring.kafka.consumer.heartbeat-interval(默认3000毫秒)
+heartbeat-interval不能大于 session.timeout.ms=3000 (默认3000毫秒)
+> 
+经过验证，将自动提交关闭之后，在消费者消费较慢的情况下，避免了
+重复消费的出现.
+7) 完全解决: 每次消费都判断消息是否被消费，但这样性能损耗较大 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
